@@ -1,0 +1,19 @@
+{
+ "content": null,
+ "creation": "2023-11-18 14:39:20.436876",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2023-11-18 14:39:20.436876",
+ "modified_by": "Administrator",
+ "module": "PickNDrop",
+ "name": "delivery-person-login",
+ "owner": "Administrator",
+ "page_name": "delivery-person-login",
+ "roles": [],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Delivery Person Login"
+}
