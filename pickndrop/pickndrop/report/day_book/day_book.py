@@ -54,37 +54,37 @@ def get_data(filters):
 def get_columns():
     return [
         {
-            "label": "Fiscal Year",
+            "label": ("Fiscal Year"),
             "fieldname": "fiscal_year",
             "fieldtype": "Data",
             "width": 100,
         },
         {
-            "label": "Posting Date",
+            "label": ("Posting Date"),
             "fieldname": "posting_date",
             "fieldtype": "Date",
             "width": 120,
         },
         {
-            "label": "Against",
+            "label": ("Against"),
             "fieldname": "against",
             "fieldtype": "Data",
             "width": 350,
         },
         {
-            "label": "Debit",
+            "label": ("Debit"),
             "fieldname": "debit",
             "fieldtype": "Currency",
             "width": 180,
         },
         {
-            "label": "Credit",
+            "label": ("Credit"),
             "fieldname": "credit",
             "fieldtype": "Currency",
             "width": 150,
         },
         {
-            "label": "Running Total",
+            "label": ("Running Total"),
             "fieldname": "running_total",
             "fieldtype": "Currency",
             "width": 150,
