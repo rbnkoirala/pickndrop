@@ -1,5 +1,4 @@
 import frappe
-from collections import defaultdict
 import json
 
 def execute(filters=None):
@@ -13,9 +12,12 @@ def get_data(filters):
     to_date = frappe.utils.getdate(filters.get("to_date"))
     company = filters.get("company")
     account = filters.get("account")
-    account_opening_balance = frappe.get_value("GL Entry", filters={"posting_date": ["<", from_date], "company": company, "account": ["=", account]}, fieldname="sum(debit) - sum(credit)")
+    account_opening_balance_dr = frappe.get_value("GL Entry", filters={"posting_date": ["<", from_date], "company": company, "is_cancelled": "0", "account": ["=", account]}, fieldname="sum(debit)")
+    account_opening_balance_cr = frappe.get_value("GL Entry", filters={"posting_date": ["<", from_date], "company": company, "is_cancelled": "0", "account": ["=", account]}, fieldname="sum(credit)")
+    account_opening_balance = account_opening_balance_dr - account_opening_balance_cr
     account_opening_balance = account_opening_balance or 0
-    data = frappe.get_all("GL Entry", filters={"posting_date": ["between", [from_date, to_date]], "account": account, "company": company}, fields=["fiscal_year", "posting_date", "against", "debit", "credit"], order_by="creation")
+    
+    data = frappe.get_all("GL Entry", filters={"posting_date": ["between", [from_date, to_date]], "account": account, "company": company, "is_cancelled": "0"}, fields=["fiscal_year", "posting_date", "against", "debit", "credit"], order_by="creation")
     if account_opening_balance > 0:
         data.insert(0, {"fiscal_year": "", "posting_date": from_date, "against": "Opening Balance", "debit": account_opening_balance, "credit": 0})
     else:
@@ -76,8 +78,12 @@ def calculate_and_format_summary(filters, data):
     to_date = filters.get("to_date")
     company = filters.get("company")
     account = filters.get("account")
-    opening_balance = frappe.get_value("GL Entry", filters={"posting_date": ["<", from_date], "company": company, "account": ["=", account]}, fieldname="sum(debit) - sum(credit)")
+    opening_balance_dr = frappe.get_value("GL Entry", filters={"posting_date": ["<", from_date], "company": company, "is_cancelled": "0", "account": ["=", account]}, fieldname="sum(debit)")
+    opening_balance_cr = frappe.get_value("GL Entry", filters={"posting_date": ["<", from_date], "company": company, "is_cancelled": "0", "account": ["=", account]}, fieldname="sum(credit)")
+    
+    opening_balance = opening_balance_dr - opening_balance_cr
     opening_balance = opening_balance or 0
+    
     net_transaction = sum([entry["debit"] for entry in data[1:-1]]) - sum([entry["credit"] for entry in data[1:-1]])
     net_transaction = net_transaction or 0
     opening_balance_label = "Opening Balance"
@@ -92,3 +98,4 @@ def calculate_and_format_summary(filters, data):
         {"value": closing_balance, "indicator": indicator_color, "label": closing_balance_label, "datatype": "Currency", "currency": currency},
     ]
     return summary
+
